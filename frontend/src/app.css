@@ -1,0 +1,81 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Login.css */
+.gradient-custom {
+  background: linear-gradient(
+    to right,
+    rgba(160, 91, 233, 0.9),
+    rgba(68, 104, 168, 0.8)
+  );
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 1rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  background-color: rgb(63, 63, 63);
+  color: whitesmoke;
+  height: 60vh;
+  width: 40vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Dashboard-container {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(97, 131, 175);
+  padding: 20px;
+  border-radius: 0px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  width: auto;
+  height: 100vh;
+  min-height: 100%;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  height: 70%;
+  border: 1px solid black;
+  padding: 0 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: auto;
+  height: 100vh;
+  min-height: 100%;
+  padding: 0 20px;
+  background-color: rgba(166, 234, 232, 0.717);
+  color: black;
+  border-radius: 0px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.image {
+  max-width: '100px';
+  height: '100px';
+  padding: '10px';
+  resize: both;
+  overflow: auto;
+}
