@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Modal, TextField } from '@mui/material/';
 import { v4 as uuidv4 } from 'uuid'; // Import uuidv4 from uuid package
+import AddIcon from '@mui/icons-material/Add';
 
 const modalSx = {
   position: 'absolute',
@@ -44,7 +45,8 @@ function NewDeck ({ decks, setDecks }) {
         }}
         style={{ margin: '0 0 0 20px' }}
       >
-        New Presentation
+        <AddIcon />
+        New Deck
       </Button>
       <Modal open={open} onClose={handleClose}>
         <div style={modalSx}>
@@ -64,7 +66,7 @@ function NewDeck ({ decks, setDecks }) {
             }}
           >
             {/* Navigate to presentation page with deckId */}
-            <Button variant="outlined">Create Presentation</Button>
+            <Button variant="outlined">Create Deck</Button>
           </Link>
         </div>
       </Modal>

@@ -1,6 +1,6 @@
 import React from 'react';
 import LogoutButton from './logoutButton.jsx';
-import Newdeck from '../components/Newdeck.jsx';
+import NewPresentation from '../components/Newdeck.jsx';
 import {
   AppBar,
   Box,
@@ -12,17 +12,11 @@ import {
   Divider,
   List,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText
+  useMediaQuery
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 const drawerWidth = 240;
 
@@ -33,6 +27,7 @@ export function Dashboardfeatures ({
   setDecks
 }) {
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
@@ -56,15 +51,6 @@ export function Dashboardfeatures ({
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="fixed">
           <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{ mr: 2, ...(open && { display: 'none' }) }}
-            >
-              <MenuIcon />
-            </IconButton>
             <Typography
               variant="h5"
               noWrap
@@ -73,9 +59,9 @@ export function Dashboardfeatures ({
             >
               Pestro
             </Typography>
-            {auth && (
+            {!isSmallScreen && auth && (
               <div className="state-icon">
-                <Newdeck decks={decks} setDecks={setDecks} />
+                <NewPresentation decks={decks} setDecks={setDecks} />
                 <LogoutButton token={token} setToken={setTokenFunction} />
                 <Menu
                   id="menu-appbar"
@@ -84,71 +70,64 @@ export function Dashboardfeatures ({
                     vertical: 'top',
                     horizontal: 'right'
                   }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                  }}
+                  // keepMounted
+                  // transformOrigin={{
+                  //   vertical: 'top',
+                  //   horizontal: 'right'
+                  // }}
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 ></Menu>
               </div>
             )}
+            {isSmallScreen && (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                sx={{ mr: 2, ...(open && { display: 'none' }) }}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
           </Toolbar>
         </AppBar>
-        <Drawer
-          // Burger menu drawer styling
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
+        {isSmallScreen && (
+          <Drawer
+            // Burger menu drawer styling
+            sx={{
               width: drawerWidth,
-              boxSizing: 'border-box',
-              backgroundColor: 'rgb(109, 145, 192);',
-              color: 'white'
-            }
-          }}
-          variant="persistent"
-          anchor="left"
-          open={open}
-        >
-          <div>
-            {/* Back button on drawer menu */}
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'ltr'
-                ? (
-                <ChevronLeftIcon />
-                  )
-                : (
+              flexShrink: 1,
+              '& .MuiDrawer-paper': {
+                width: drawerWidth,
+                boxSizing: 'border-box',
+                backgroundColor: 'rgb(109, 145, 192);',
+                color: 'white'
+              }
+            }}
+            variant="persistent"
+            anchor="right"
+            open={open}
+          >
+            <div>
+              {/* Back button on drawer menu */}
+              <IconButton onClick={handleDrawerClose}>
                 <ChevronRightIcon />
-                  )}
-            </IconButton>
-          </div>
-          <Divider />
-          <List>
-            {['Edit', 'Save', 'Delete'].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index === 0
-                      ? (
-                      <EditIcon />
-                        )
-                      : index === 1
-                        ? (
-                      <SaveIcon />
-                          )
-                        : (
-                      <DeleteIcon />
-                          )}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
+              </IconButton>
+            </div>
+            <Divider />
+            <List>
+              <ListItem>
+                <NewPresentation decks={decks} setDecks={setDecks} />
               </ListItem>
-            ))}
-          </List>
-          <Divider />
-        </Drawer>
+              <ListItem>
+                <LogoutButton token={token} setToken={setTokenFunction} />
+              </ListItem>
+            </List>
+            <Divider />
+          </Drawer>
+        )}
       </Box>
     </>
   );
