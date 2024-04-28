@@ -1,5 +1,5 @@
 import React from 'react';
-import LogoutButton from './logoutButton.jsx';
+import LogoutButton from './LogoutButton.jsx';
 import NewPresentation from '../components/Newdeck.jsx';
 import {
   AppBar,

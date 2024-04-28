@@ -77,77 +77,78 @@ function Login ({ token, setTokenFunction }) {
   };
 
   return (
-    <section className="gradient-custom">
-      <div className="container py-5 h-100" style={flexColumn}>
-        <div className="bg-dark text-white" style={form}>
-          <div style={flexColumn}>
-            <h1 style={heading} className="fw-bold mb-2 text-uppercase">
-              Login
-            </h1>
-            <h4 className="text-white-50">
-              Please enter your login and password!
-            </h4>
-            <form style={flexColumn}>
-              <div style={{ flexrow }} className="form-outline form-white">
-                <label
-                  className="form-label"
-                  htmlFor="typeEmailX"
-                  style={labelField}
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="typeEmailX"
-                  style={Inputfield}
-                  className="form-control form-control-lg"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <br />
-              <div style={{ flexrow }} className="form-outline form-white">
-                <label
-                  className="form-label"
-                  htmlFor="typePasswordX"
-                  style={labelField}
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="typePasswordX"
-                  style={Inputfield}
-                  className="form-control form-control-lg"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <br />
-              <p style={{ paddingLeft: '80px' }} className="mb-0">
-                Don&apos;t have an account?{' '}
-                <a
-                  href="#!"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate('/register');
-                  }}
-                  className="text-white-50 fw-bold"
-                >
-                  Sign Up
-                </a>
-              </p>
-            </form>
+    <section
+      className="gradient-custom"
+      style={{ ...flexColumn, width: '100vw', height: '100vh' }}
+    >
+      <div style={{ ...form, ...flexColumn }}>
+        <div style={flexColumn}>
+          <h1 style={heading} className="fw-bold mb-2 text-uppercase">
+            Login
+          </h1>
+          <h4 className="text-white-50">
+            Please enter your login and password!
+          </h4>
+          <form style={flexColumn}>
+            <div style={{ flexrow }} className="form-outline form-white">
+              <label
+                className="form-label"
+                htmlFor="typeEmailX"
+                style={labelField}
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="typeEmailX"
+                style={Inputfield}
+                className="form-control form-control-lg"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
             <br />
-            <button
-              className="btn btn-outline-light btn-lg px-5"
-              type="submit"
-              onClick={login}
-              style={submit}
-            >
-              Login
-            </button>
-          </div>
+            <div style={{ flexrow }} className="form-outline form-white">
+              <label
+                className="form-label"
+                htmlFor="typePasswordX"
+                style={labelField}
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                id="typePasswordX"
+                style={Inputfield}
+                className="form-control form-control-lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <br />
+            <p style={{ paddingLeft: '80px' }} className="mb-0">
+              Don&apos;t have an account?{' '}
+              <a
+                href="#!"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/register');
+                }}
+                className="text-white-50 fw-bold"
+              >
+                Sign Up
+              </a>
+            </p>
+          </form>
+          <br />
+          <button
+            className="btn btn-outline-light btn-lg px-5"
+            type="submit"
+            onClick={login}
+            style={submit}
+          >
+            Login
+          </button>
         </div>
       </div>
       <Footer />
