@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Modal,
   Button,
@@ -8,9 +8,9 @@ import {
   ButtonGroup
 } from '@mui/material';
 import { useMediaQuery } from 'react-responsive';
+import { sideButtonStyle, modalStyle, inputStyle, buttonStyle } from '../css/sidebar';
 
 export function VideoComponent ({
-  useState,
   currentSlide,
   slides,
   setSlides,
@@ -19,51 +19,8 @@ export function VideoComponent ({
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const isPhone = useMediaQuery({ query: '(max-width: 600px)' });
+  
 
-  const sidebutton = {
-    width: isPhone ? '100%' : '80%',
-    padding: isPhone ? '5px 0' : '10px',
-    margin: isPhone ? '10px 0' : '0 0 20px 0',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    border: isPhone ? '0px' : '1px solid #fff',
-    borderBottom: isPhone ? '3px solid #000' : '0',
-    borderRadius: isPhone ? '0px' : '10px',
-    color: isPhone ? '#000' : 'white',
-    backgroundColor: isPhone ? '#fff' : '#000'
-  };
-
-  const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: isPhone ? '60%' : '50%',
-    height: isPhone ? '50%' : '60%',
-    backgroundColor: '#fff',
-    backdropFilter: 'blur(5px)',
-    border: '2px solid #000',
-    borderRadius: '20px',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-  };
-
-  const inputStyle = {
-    fontSize: '1.5em',
-    width: '60%',
-    height: 'auto',
-    margin: '0 10px 10px 0',
-    padding: '5px'
-  };
-
-  const buttonStyle = {
-    fontSize: '0.8em',
-    padding: '10px'
-  };
   // Function to handle the video URL input
   const handleVideoUrlInput = (event) => {
     setVideoUrl(event.target.value);
@@ -92,7 +49,7 @@ export function VideoComponent ({
     <>
       <Button
         variant="outlined"
-        style={sidebutton}
+        style={sideButtonStyle(isPhone)}
         onClick={() => setVideoModalOpen(true)}
       >
         Video
@@ -102,7 +59,7 @@ export function VideoComponent ({
         open={videoModalOpen}
         onClose={() => setVideoModalOpen(false)}
       >
-        <Box sx={modalStyle}>
+        <Box sx={modalStyle(isPhone)}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Enter the URL of the video
           </Typography>

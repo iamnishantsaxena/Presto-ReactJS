@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button, createSvgIcon } from '@mui/material';
 import Header from '../components/TitleHeader.jsx';
-import SidebarComponents from '../components/SidebarComponent.jsx';
+import Sidebar from '../components/Sidebar.jsx';
 import { useMediaQuery } from 'react-responsive';
 import CurrentSlide from '../components/CurrentSlide.jsx';
+import { useLocation } from 'react-router-dom';
 
 // SVG Components
 const PlusIcon = createSvgIcon(
@@ -25,6 +26,7 @@ const PlusIcon = createSvgIcon(
 );
 
 function EditPresentation ({ decks, setDecks }) {
+  const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const deckId = queryParams.get('deckId');
   const deck = decks.find((deck) => deck.deckId === deckId);
@@ -173,7 +175,7 @@ function EditPresentation ({ decks, setDecks }) {
       {/* Use deckId, deckName, and slides as the values of your form fields */}
       {/* Use setDeckId, setDeckName, and setSlides as the onChange handlers of your form fields */}
       <div id="presentation-container" style={containerStyle}>
-        <SidebarComponents
+        <Sidebar
           useState={useState}
           currentSlide={currentSlide}
           slides={slides}

@@ -1,25 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, createSvgIcon } from '@mui/material';
 import Header from '../components/TitleHeader.jsx';
-import SidebarComponents from '../components/SidebarComponent.jsx';
+import Sidebar from '../components/Sidebar.jsx';
 import CurrentSlide from '../components/CurrentSlide.jsx';
-import { useMediaQuery } from 'react-responsive';
+import { useLocation } from 'react-router-dom';
 
-// SVG Components
+// SVG Component for Plus Icon
 const PlusIcon = createSvgIcon(
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="h-6 w-6"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 4.5v15m7.5-7.5h-15"
-    />
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
   </svg>,
   'Plus'
 );
@@ -29,197 +18,108 @@ const defaultSlides = [
   {
     id: 1,
     page: 1,
-    objects: [
-      {
-        type: 'text',
-        title: ''
-      }
-    ]
+    objects: [{ id: Date.now(), type: 'text', title: '' }] // Make sure each object has a unique ID
   }
 ];
 
 function Presentation ({ token, decks, setDecks }) {
+  const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const deckId = queryParams.get('deckid');
   const deckName = queryParams.get('deckname');
+  
   const [slides, setSlides] = useState(
-    localStorage.getItem('deck')
-      ? JSON.parse(localStorage.getItem('deck')).slides || defaultSlides
-      : defaultSlides
+    JSON.parse(localStorage.getItem('deck') || '{}').slides || defaultSlides
   );
+  
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const currentSlide = slides[currentSlideIndex];
+
+  // Store slides in localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(
-        'deck',
-        JSON.stringify({ deckId, deckName, slides })
-      );
+      localStorage.setItem('deck', JSON.stringify({ deckId, deckName, slides }));
     } catch (error) {
       console.error('Error storing slides:', error);
     }
-    setSlides(slides);
-    setDecks((prevDecks) => {
-      // Find the index of the deck to update
-      const deckIndex = prevDecks.findIndex((deck) => deck.deckId === deckId);
+  }, [slides, deckId, deckName]);
 
-      // If the deck is found, update it
-      if (deckIndex !== -1) {
-        prevDecks[deckIndex] = { deckId, deckName, slides };
-      } else {
-        // If the deck is not found, add it
-        prevDecks.push({ deckId, deckName, slides });
-      }
-
-      return [...prevDecks];
-    });
-  }, [slides, token]);
-
-  // Updating handleAddSlide
+  // Handle adding a new slide
   const handleAddSlide = () => {
     const newSlide = {
-      id: slides.length + 1, // or generate a unique ID
+      id: slides.length + 1,
       page: slides.length + 1,
-      objects: [
-        {
-          id: Date.now(),
-          type: 'text',
-          title: 'Slide ' + (slides.length + 1) // initial title
-        }
-      ]
+      objects: [{ id: Date.now(), type: 'text', title: `Slide ${slides.length + 1}` }]
     };
-    console.log('New Slide:', newSlide);
+    setSlides((prevSlides) => [...prevSlides, newSlide]);
+  };
 
+  // Handle deleting a slide
+  const handleDeleteSlide = () => {
     setSlides((prevSlides) => {
-      const updatedSlides = [...prevSlides, newSlide];
-      console.log('Updated slides:', updatedSlides); // Log updated slides inside setSlides
+      const updatedSlides = prevSlides.filter((_, index) => index !== currentSlideIndex);
+      // Adjust currentSlideIndex if the deleted slide is the current one
+      setCurrentSlideIndex(prevIndex => (prevIndex >= updatedSlides.length ? updatedSlides.length - 1 : prevIndex));
       return updatedSlides;
     });
   };
 
-  // Function to handle deleting a slide
-  const handleDeleteSlide = () => {
-    setSlides((prevSlides) => {
-      return prevSlides.filter((slide, index) => index !== currentSlideIndex);
-    });
+  const nextSlide = useCallback(() => {
+    if (currentSlideIndex < slides.length - 1) setCurrentSlideIndex(currentSlideIndex + 1);
+  }, [currentSlideIndex, slides.length]);
 
-    // If the current slide is the last one, move to the previous slide
-    if (currentSlideIndex === slides.length - 1) {
-      setCurrentSlideIndex(currentSlideIndex - 1);
-    }
-  };
-  // Function to handle moving to next slide
-  const nextSlide = () => {
-    if (currentSlideIndex < slides.length - 1) {
-      setCurrentSlideIndex(currentSlideIndex + 1);
-    }
-  };
-  // Function to handle moving to previous slide
-  const prevSlide = () => {
-    if (currentSlideIndex > 0) {
-      setCurrentSlideIndex(currentSlideIndex - 1);
-    }
-  };
+  const prevSlide = useCallback(() => {
+    if (currentSlideIndex > 0) setCurrentSlideIndex(currentSlideIndex - 1);
+  }, [currentSlideIndex]);
 
+  // Keyboard navigation for slides
   useEffect(() => {
     const handleKeyDown = (event) => {
-      switch (event.key) {
-        case 'ArrowLeft':
-          prevSlide();
-          break;
-        case 'ArrowRight':
-          nextSlide();
-          break;
-        default:
-          break;
-      }
+      if (event.key === 'ArrowLeft') prevSlide();
+      else if (event.key === 'ArrowRight') nextSlide();
     };
-
     window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [prevSlide, nextSlide]);
-  const isTinyPhone = useMediaQuery({ query: '(max-width: 430px)' });
-  const isPhone = useMediaQuery({ query: '(max-width: 600px)' });
-  // const isTablet = useMediaQuery({
-  //   query: '(min-width: 601px) and (max-width: 1024px)'
-  // });
-  // const isLaptop = useMediaQuery({ query: '(min-width: 1025px)' });
 
-  // Styles
-  const containerStyle = {
-    height: isPhone ? '100%' : '80%',
-    margin: '10px 0',
-    padding: isPhone ? '0' : '10px 5px 20px 5px',
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    border: '1px solid #ccc',
-    backgroundColor: '#f8f9fa',
-    overflow: 'hidden'
-  };
+  // Get the current slide based on the index
+  const currentSlide = slides[currentSlideIndex] || defaultSlides[0]; // Fallback to a default slide if currentSlide is undefined
 
-  const SlideLayout = {
-    width: isPhone ? '30%' : '80%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: isTinyPhone ? 'row' : 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '10px',
-    margin: isPhone ? '0' : '0 20px 0 0' // top, right, bottom, left
-  };
-  const buttonBar = {
-    display: 'flex',
-    flexDirection: isPhone ? 'column' : 'row',
-    justifyContent: 'flex-end',
-    margin: '5px 0 0 0'
-  };
   return (
-    <div className="container">
-      <Header
-        useState={useState}
-        decks={decks}
-        setDecks={setDecks}
-        deckId={deckId}
-        deckName={deckName}
-      />
-      <div id="presentation-container" style={containerStyle}>
-        {/* Sidebar */}
-        <SidebarComponents
-          useState={useState}
-          currentSlide={currentSlide}
-          slides={slides}
-          setSlides={setSlides}
-          decks={decks}
-        />
-        <div id="nav" style={{ SlideLayout }}>
-          <div style={buttonBar}>
-            <Button variant="outlined" size="small" onClick={handleAddSlide}>
-              <PlusIcon />
-            </Button>
+    <div className="min-h-screen bg-gray-100">
+      <Header decks={decks} setDecks={setDecks} deckId={deckId} deckName={deckName} />
 
-            <Button variant="outlined" onClick={handleDeleteSlide}>
-              Delete Slidelide
+      <div className="flex flex-col lg:flex-row mx-4 my-8 bg-white shadow-lg rounded-lg overflow-hidden">
+        {/* Sidebar */}
+        <div className="lg:w-1/4 p-4 bg-gray-200">
+          <Sidebar
+            currentSlide={currentSlide} // Pass the current slide object
+            slides={slides}
+            setSlides={setSlides}
+            decks={decks}
+          />
+        </div>
+
+        {/* Main Content */}
+        <div className="lg:w-3/4 p-6 flex flex-col space-y-6">
+          {/* Buttons for Adding and Deleting Slides */}
+          <div className="flex justify-end space-x-2">
+            <Button variant="contained" color="primary" onClick={handleAddSlide} startIcon={<PlusIcon />}>
+              Add Slide
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={handleDeleteSlide}>
+              Delete Slide
             </Button>
           </div>
 
-          <CurrentSlide slides={slides} />
-
-          {/* Navigation buttons to move between slides */}
-          <div style={buttonBar}>
-            {currentSlideIndex !== 0 && (
-              <Button variant="outlined" size="small" onClick={prevSlide}>
-                Previous
-              </Button>
-            )}
-            {currentSlideIndex !== slides.length - 1 && (
-              <Button variant="outlined" size="small" onClick={nextSlide}>
-                Next
-              </Button>
-            )}
+          {/* Current Slide */}
+          <div className="flex-grow border border-gray-300 rounded-lg overflow-hidden p-4">
+            <CurrentSlide 
+              slides={slides} 
+              currentSlideIndex={currentSlideIndex} 
+              nextSlide={nextSlide} 
+              prevSlide={prevSlide} 
+              currentSlide={currentSlide} // Pass the current slide object to CurrentSlide
+            />
           </div>
         </div>
       </div>

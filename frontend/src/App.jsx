@@ -19,7 +19,7 @@ const getStore = async (token) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching store:', error);
-    return {};
+    return null;  // Return null to handle token expiration or unauthorized access
   }
 };
 
@@ -37,101 +37,112 @@ const putStore = async (token, store) => {
       }
     );
   } catch (error) {
-    console.error('Error fetching store:', error);
+    console.error('Error updating store:', error);
   }
 };
 
-function App () {
-  let lstoken = null;
-  if (localStorage.getItem('token')) {
-    lstoken = localStorage.getItem('token');
-  }
-  const [token, setToken] = React.useState(lstoken);
-  console.log('token', token);
-  const setTokenabstract = (token) => {
-    setToken(token);
-    localStorage.setItem('token', token);
+function App() {
+  // Retrieve token and decks from localStorage or set default
+  const [token, setToken] = React.useState(localStorage.getItem('token') || null);
+  const [decks, setDecks] = React.useState(() => {
+    const storedDecks = localStorage.getItem('decks');
+    return storedDecks ? JSON.parse(storedDecks) : [];
+  });
+
+  // Function to update token in both state and localStorage
+  const setTokenabstract = (newToken) => {
+    setToken(newToken);
+    localStorage.setItem('token', newToken);
   };
-  console.log(token);
-  let lsDecks = localStorage.getItem('decks');
-  if (!lsDecks) {
-    lsDecks = [];
-  } else {
-    lsDecks = JSON.parse(lsDecks);
-  }
-  const [decks, setDecks] = React.useState(lsDecks);
+
+  // Load store from server when component mounts
   React.useEffect(() => {
-    getStore(token).then((store) => {
-      if (Object.keys(store).length === 0) {
-        store = { decks };
-        // putStore(token, store);
-      }
-      if (!localStorage.getItem('decks')) {
-        localStorage.setItem('decks', JSON.stringify(decks));
-        setDecks(decks);
-      }
-    });
-  }, []);
+    if (token) {
+      getStore(token).then((store) => {
+        if (store) {
+          const updatedDecks = store.decks || [];
+          setDecks(updatedDecks);
+          localStorage.setItem('decks', JSON.stringify(updatedDecks));
+        } else {
+          // Token invalid or expired, clear token and redirect to login
+          setTokenabstract(null);
+          localStorage.removeItem('token');
+        }
+      });
+    }
+  }, [token]);
+
+  // Update server store and localStorage whenever `decks` changes
   React.useEffect(() => {
-    putStore(token, decks);
-    console.log('updated store', { decks });
-    localStorage.setItem('decks', JSON.stringify(decks));
-  }, [decks]);
-  console.log('decks ', decks);
+    if (token && decks) {
+      putStore(token, { decks });
+      localStorage.setItem('decks', JSON.stringify(decks));
+    }
+  }, [decks, token]);
 
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/presentation/edit"
-            element={
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/presentation/edit"
+          element={
+            token ? (
               <EditPresentation
                 token={token}
                 setTokenFunction={setTokenabstract}
                 decks={decks}
                 setDecks={setDecks}
               />
-            }
-          />
-          <Route
-            path="/presentation/new"
-            element={
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/presentation/new"
+          element={
+            token ? (
               <NewPresentation
                 token={token}
                 setTokenFunction={setTokenabstract}
                 decks={decks}
                 setDecks={setDecks}
               />
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            token ? (
               <Dashboard
                 token={token}
                 setTokenFunction={setTokenabstract}
                 decks={decks}
                 setDecks={setDecks}
               />
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <Register token={token} setTokenFunction={setTokenabstract} />
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <Login token={token} setTokenFunction={setTokenabstract} />
-            }
-          />
-          <Route exact path="/" element={<Navigate to="/login" />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <Register token={token} setTokenFunction={setTokenabstract} />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Login token={token} setTokenFunction={setTokenabstract} />
+          }
+        />
+        <Route path="/" element={<Navigate to="/login" />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

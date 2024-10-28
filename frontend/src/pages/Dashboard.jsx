@@ -22,14 +22,15 @@ function Dashboard ({ token, setTokenFunction, decks, setDecks }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
-
   console.log(setAuth);
 
   if (token === null) {
     return <Navigate to="/login" />;
   }
   console.log(token);
-
+  if (decks === null) {
+    console.log('decks: ', decks);
+  }
   return (
     <section style={{ container }}>
       <Burgermenu
