@@ -21,7 +21,7 @@ const modalSx = {
   alignItems: 'center'
 };
 
-function NewDeck ({ decks, setDecks }) {
+function CreateNewDeck ({ decks, setDecks }) {
   const [open, setOpen] = useState(false);
   const [deckName, setDeckName] = useState('');
   const [deckId, setDeckId] = useState('');
@@ -74,4 +74,4 @@ function NewDeck ({ decks, setDecks }) {
   );
 }
 
-export default NewDeck;
+export default CreateNewDeck;

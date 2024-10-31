@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useMediaQuery } from 'react-responsive';
+// import { useMediaQuery } from 'react-responsive';
 import TextComponent from './TextComponent';
 import CodeComponent from './CodeComponent';
 import VideoComponent from './VideoComponent';
 import ImageComponent from './ImageComponent';
 import CSSPanel from './CSSPanel';
-import { sidebarStyle } from '../css/sidebar.js';
+// import { sidebarStyle } from '../css/sidebar.js';
 import  '../css/sidebar.css';
 
 const Sidebar = ({
@@ -14,8 +14,8 @@ const Sidebar = ({
   setSlides,
   decks
 }) => {
-  const isPhone = useMediaQuery({ query: '(max-width: 600px)' });
-  const isTinyPhone = useMediaQuery({ query: '(max-width: 430px)' });
+  // const isPhone = useMediaQuery({ query: '(max-width: 600px)' });
+  // const isTinyPhone = useMediaQuery({ query: '(max-width: 430px)' });
 
   // State for selected object and visibility of CSS panel
   const [selectedObject, setSelectedObject] = useState(null);
@@ -39,6 +39,7 @@ const Sidebar = ({
       setSlides(slides.map(slide => (slide.id === currentSlide.id ? updatedSlide : slide)));
     }
   };
+  
 
   return (
     <div id="sidebar" className="sidebar">

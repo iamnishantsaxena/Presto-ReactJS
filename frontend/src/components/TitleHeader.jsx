@@ -55,11 +55,29 @@ const TrashIcon = createSvgIcon(
   'Trash'
 );
 
-function TitleHeader({ decks, setDecks, deckId, deckName }) {
+function TitleHeader({ decks, setDecks, deckId, deckName, slides }) {
   const navigate = useNavigate();
   const [presentationTitle, setPresentationTitle] = useState(deckName || 'Untitled Presentation');
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+
+  // Save the current deck with updated title and slides
+  const saveDeck = () => {
+    const updatedDecks = decks.map(deck => {
+      if (deck.deckId === deckId) {
+        return [{ ...deck, name: presentationTitle, slides }];
+      }
+      return deck;
+    });
+
+    setDecks(updatedDecks);
+    localStorage.setItem('decks', JSON.stringify(updatedDecks));
+  };
+
+  const handleBack = () => {
+    saveDeck(); // Save changes before navigating back
+    navigate('/dashboard');
+  };
 
   const handleSaveTitle = (newTitle) => {
     setPresentationTitle(newTitle);
@@ -78,7 +96,7 @@ function TitleHeader({ decks, setDecks, deckId, deckName }) {
   return (
     <>
       <div className="flex justify-between items-center border-b border-gray-300 p-4 bg-gray-100 shadow-md">
-        <Button variant="contained" onClick={() => navigate('/dashboard')} className="flex items-center">
+        <Button variant="contained" onClick={handleBack} className="flex items-center">
           <BackIcon />
         </Button>
 

@@ -6,8 +6,8 @@ import './app.css';
 import Dashboard from './pages/Dashboard.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
-import NewPresentation from './pages/Presentation.jsx';
-import EditPresentation from './pages/EditDeck.jsx';
+import NewPresentation from './pages/Deck.jsx';
+// import EditPresentation from './pages/EditDeck.jsx';
 
 const getStore = async (token) => {
   try {
@@ -87,7 +87,7 @@ function App() {
           path="/presentation/edit"
           element={
             token ? (
-              <EditPresentation
+              <NewPresentation
                 token={token}
                 setTokenFunction={setTokenabstract}
                 decks={decks}

@@ -1,6 +1,6 @@
 import React from 'react';
 import LogoutButton from './LogoutButton.jsx';
-import NewPresentation from '../components/Newdeck.jsx';
+import CreateNewDeck from './CreateNewDeck.jsx';
 import {
   AppBar,
   Box,
@@ -61,7 +61,7 @@ export function Dashboardfeatures ({
             </Typography>
             {!isSmallScreen && auth && (
               <div className="state-icon">
-                <NewPresentation decks={decks} setDecks={setDecks} />
+                <CreateNewDeck decks={decks} setDecks={setDecks} />
                 <LogoutButton token={token} setToken={setTokenFunction} />
                 <Menu
                   id="menu-appbar"
@@ -119,7 +119,7 @@ export function Dashboardfeatures ({
             <Divider />
             <List>
               <ListItem>
-                <NewPresentation decks={decks} setDecks={setDecks} />
+                <CreateNewDeck decks={decks} setDecks={setDecks} />
               </ListItem>
               <ListItem>
                 <LogoutButton token={token} setToken={setTokenFunction} />

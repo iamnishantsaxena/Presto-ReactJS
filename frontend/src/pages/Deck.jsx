@@ -28,6 +28,7 @@ function Presentation ({ token, decks, setDecks }) {
   const deckId = queryParams.get('deckid');
   const deckName = queryParams.get('deckname');
   
+  
   const [slides, setSlides] = useState(
     JSON.parse(localStorage.getItem('deck') || '{}').slides || defaultSlides
   );
@@ -42,6 +43,21 @@ function Presentation ({ token, decks, setDecks }) {
       console.error('Error storing slides:', error);
     }
   }, [slides, deckId, deckName]);
+
+  // Function to save decks to local storage
+  const saveDecksToLocalStorage = useCallback(() => {
+    try {
+      localStorage.setItem('decks', JSON.stringify([{ deckId, deckName, slides }]));
+
+    } catch (error) {
+      console.error('Error storing decks:', error);
+    }
+  }, [deckId, deckName, slides]);
+
+  // Auto-save slides to local storage whenever slides or decks change
+  useEffect(() => {
+    saveDecksToLocalStorage();
+  }, [slides, saveDecksToLocalStorage]);
 
   // Handle adding a new slide
   const handleAddSlide = () => {
@@ -86,7 +102,7 @@ function Presentation ({ token, decks, setDecks }) {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header decks={decks} setDecks={setDecks} deckId={deckId} deckName={deckName} />
+      <Header decks={decks} setDecks={setDecks} deckId={deckId} deckName={deckName} slides={slides} />
 
       <div className="flex flex-col lg:flex-row mx-4 my-8 bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Sidebar */}
